@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - GLC Conference</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container container--wide">
+    <header class="page-header">
+      <h1>Admin Dashboard</h1>
+      <p><a href="/">Back to Registration</a></p>
+    </header>
+
+    <div class="card">
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Search by name or email...">
+        <span id="regCount" class="badge">0 registrations</span>
+        <button id="exportBtn" class="btn btn-secondary">Export CSV</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="regTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Organization</th>
+              <th>Dietary</th>
+              <th>Sessions</th>
+              <th>T-Shirt</th>
+              <th>Registered</th>
+            </tr>
+          </thead>
+          <tbody id="regTableBody"></tbody>
+        </table>
+      </div>
+
+      <p id="emptyState" class="empty-state" hidden>No registrations found.</p>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
