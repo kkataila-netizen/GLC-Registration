@@ -7,16 +7,27 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <nav class="top-nav">
+    <a href="/" class="top-nav__brand">
+      <div class="top-nav__logo">G</div>
+      <span class="top-nav__title">Global Leadership Conference</span>
+    </a>
+    <ul class="top-nav__links">
+      <li><a href="/">Register</a></li>
+      <li><a href="/admin.html" class="active">Admin</a></li>
+    </ul>
+  </nav>
+
   <div class="container container--wide">
     <header class="page-header">
       <h1>Admin Dashboard</h1>
-      <p><a href="/">Back to Registration</a></p>
+      <p>Manage conference registrations</p>
     </header>
 
     <div class="card">
       <div class="toolbar">
         <input type="text" id="searchInput" placeholder="Search by name or email...">
-        <span id="regCount" class="badge">0 registrations</span>
+        <span id="regCount" class="badge badge--count">0 registrations</span>
         <button id="exportBtn" class="btn btn-secondary">Export CSV</button>
       </div>
 
