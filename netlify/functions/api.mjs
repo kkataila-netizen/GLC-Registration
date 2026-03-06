@@ -153,5 +153,5 @@ export default async (req, context) => {
     return json({ registrations, total: registrations.length });
   }
 
-  return json({ error: "Not found" }, 404);
+  return json({ error: "Not found", debug: { url: req.url, pathname: url.pathname, path, method } }, 404);
 };
