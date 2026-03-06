@@ -1,4 +1,4 @@
-const { getStore } = require("@netlify/blobs");
+import { getStore } from "@netlify/blobs";
 
 const VALID_DIETARY = ['None', 'Vegetarian', 'Vegan', 'Gluten-free', 'Halal', 'Kosher', 'Other'];
 const VALID_TSHIRT = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
@@ -51,37 +51,38 @@ async function saveRegistrations(registrations) {
   await store.setJSON("all", registrations);
 }
 
-function respond(body, statusCode = 200, extraHeaders = {}) {
-  return {
-    statusCode,
-    headers: { "Content-Type": "application/json", ...extraHeaders },
-    body: typeof body === 'string' ? body : JSON.stringify(body)
-  };
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" }
+  });
 }
 
-exports.handler = async (event, context) => {
-  const path = event.path.replace("/.netlify/functions/api", "");
-  const method = event.httpMethod;
+export default async (req, context) => {
+  const url = new URL(req.url);
+  // Strip the netlify function prefix to get the API path
+  const path = url.pathname.replace("/.netlify/functions/api", "");
+  const method = req.method;
 
   // POST /api/registrations
   if (method === "POST" && (path === "/registrations" || path === "/registrations/")) {
     let body;
     try {
-      body = JSON.parse(event.body);
+      body = await req.json();
     } catch {
-      return respond({ success: false, errors: ["Invalid JSON body."] }, 400);
+      return json({ success: false, errors: ["Invalid JSON body."] }, 400);
     }
 
     const { valid, errors } = validateRegistration(body);
     if (!valid) {
-      return respond({ success: false, errors }, 400);
+      return json({ success: false, errors }, 400);
     }
 
     const registrations = await getRegistrations();
     const email = body.email.trim().toLowerCase();
 
     if (registrations.some(r => r.email.toLowerCase() === email)) {
-      return respond({ success: false, errors: ["This email is already registered."] }, 409);
+      return json({ success: false, errors: ["This email is already registered."] }, 409);
     }
 
     const registration = {
@@ -100,7 +101,7 @@ exports.handler = async (event, context) => {
     registrations.push(registration);
     await saveRegistrations(registrations);
 
-    return respond({ success: true, registration }, 201);
+    return json({ success: true, registration }, 201);
   }
 
   // GET /api/registrations/export
@@ -121,37 +122,36 @@ exports.handler = async (event, context) => {
 
     const csv = [headers.join(','), ...rows].join('\n');
 
-    return {
-      statusCode: 200,
+    return new Response(csv, {
+      status: 200,
       headers: {
         "Content-Type": "text/csv",
         "Content-Disposition": 'attachment; filename="registrations.csv"'
-      },
-      body: csv
-    };
+      }
+    });
   }
 
   // GET /api/registrations/count
   if (method === "GET" && (path === "/registrations/count" || path === "/registrations/count/")) {
     const registrations = await getRegistrations();
-    return respond({ count: registrations.length });
+    return json({ count: registrations.length });
   }
 
   // GET /api/registrations
   if (method === "GET" && (path === "/registrations" || path === "/registrations/")) {
     let registrations = await getRegistrations();
-    const qs = event.queryStringParameters || {};
+    const search = url.searchParams.get("search");
 
-    if (qs.search) {
-      const term = qs.search.toLowerCase();
+    if (search) {
+      const term = search.toLowerCase();
       registrations = registrations.filter(r =>
         r.name.toLowerCase().includes(term) ||
         r.email.toLowerCase().includes(term)
       );
     }
 
-    return respond({ registrations, total: registrations.length });
+    return json({ registrations, total: registrations.length });
   }
 
-  return respond({ error: "Not found" }, 404);
+  return json({ error: "Not found" }, 404);
 };
