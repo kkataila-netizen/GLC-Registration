@@ -60,8 +60,8 @@ function json(body, status = 200) {
 
 export default async (req, context) => {
   const url = new URL(req.url);
-  // Strip the netlify function prefix to get the API path
-  const path = url.pathname.replace("/.netlify/functions/api", "");
+  // Strip the /api prefix to get the route path
+  const path = url.pathname.replace(/^\/api/, "");
   const method = req.method;
 
   // POST /api/registrations
@@ -153,5 +153,5 @@ export default async (req, context) => {
     return json({ registrations, total: registrations.length });
   }
 
-  return json({ error: "Not found", debug: { url: req.url, pathname: url.pathname, path, method } }, 404);
+  return json({ error: "Not found" }, 404);
 };
