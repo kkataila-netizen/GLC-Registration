@@ -99,6 +99,7 @@ app.post('/api/registrations', (req, res) => {
     id: crypto.randomUUID(),
     name: req.body.name.trim(),
     email: email,
+    arrivalDate: req.body.arrivalDate || '',
     phone: req.body.phone ? req.body.phone.trim() : '',
     organization: req.body.organization ? req.body.organization.trim() : '',
     dietary: req.body.dietary || 'None',
@@ -138,10 +139,11 @@ app.get('/api/registrations/count', (req, res) => {
 // Export CSV
 app.get('/api/registrations/export', (req, res) => {
   const registrations = readRegistrations();
-  const headers = ['Name', 'Email', 'Phone', 'Organization', 'Dietary', 'Sessions', 'T-Shirt', 'Registered'];
+  const headers = ['Name', 'Email', 'Arrival Date', 'Phone', 'Organization', 'Dietary', 'Sessions', 'T-Shirt', 'Registered'];
   const rows = registrations.map(r => [
     escapeCSV(r.name),
     escapeCSV(r.email),
+    escapeCSV(r.arrivalDate),
     escapeCSV(r.phone),
     escapeCSV(r.organization),
     escapeCSV(r.dietary),

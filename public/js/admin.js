@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${i + 1}</td>
         <td>${esc(r.name)}</td>
         <td>${esc(r.email)}</td>
+        <td>${esc(r.arrivalDate) || '—'}</td>
         <td>${esc(r.phone) || '—'}</td>
         <td>${esc(r.organization) || '—'}</td>
         <td>${esc(r.dietary) || 'None'}</td>

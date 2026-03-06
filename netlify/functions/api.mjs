@@ -89,6 +89,7 @@ export default async (req, context) => {
       id: crypto.randomUUID(),
       name: body.name.trim(),
       email,
+      arrivalDate: body.arrivalDate || '',
       phone: body.phone ? body.phone.trim() : '',
       organization: body.organization ? body.organization.trim() : '',
       dietary: body.dietary || 'None',
@@ -106,10 +107,11 @@ export default async (req, context) => {
   // GET /api/registrations/export
   if (method === "GET" && (path === "/registrations/export" || path === "/registrations/export/")) {
     const registrations = await getRegistrations();
-    const headers = ['Name', 'Email', 'Phone', 'Organization', 'Dietary', 'Sessions', 'T-Shirt', 'Registered'];
+    const headers = ['Name', 'Email', 'Arrival Date', 'Phone', 'Organization', 'Dietary', 'Sessions', 'T-Shirt', 'Registered'];
     const rows = registrations.map(r => [
       escapeCSV(r.name),
       escapeCSV(r.email),
+      escapeCSV(r.arrivalDate),
       escapeCSV(r.phone),
       escapeCSV(r.organization),
       escapeCSV(r.dietary),
